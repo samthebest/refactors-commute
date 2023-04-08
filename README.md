@@ -30,7 +30,7 @@ map_F(id[T])(t) must_=== id[F[T]](t)
 Where we more commonly see syntax like the following (letting `l: F[T]`)
 
 ```
-l.map(f).map(g) must_=== l.map(x => g(f(x)))
+l.map(x => g(f(x))) must_=== l.map(f).map(g)
 ```
 
 ## Practical Application
