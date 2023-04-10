@@ -47,3 +47,39 @@ Some existing free resources
 https://www.slideshare.net/samthemonad/monad-presentation-scala-as-a-category
 https://wiki.haskell.org/User:Michiexile/MATH198/Lecture_4
 https://bartoszmilewski.com/2014/12/23/kleisli-categories/
+
+# README
+
+## Install MacTeX
+
+`brew install mactex`
+
+Restart terminal, then can compile LaTeX with
+
+`xelatex file_name.tex file_name.pdf`, but this seems flakey, it also installs a program called `pdflatex`, and this actually seems to work, see "Generate and open the pdf document"
+
+## OR Intall MiKTeX
+
+MikTek is a latex editor which includes latex templates and that.
+
+Install MiKTeX using brew:
+
+```
+brew install miktex-console
+```
+
+## Generate and open the pdf document
+
+The code below initially creates the pdf version of the latex document which is then opened using the second line of code:
+
+```
+pdflatex -interaction=nonstopmode functional_programming_laws_from_category_theory.tex
+open ../functional_programming_laws_from_category_theory.pdf
+```
+
+NOTE: for some weird reason sometimes you have to run the above `pdflatex` command twice, particularly if you've run `bin/clean.sh` or just checked out the repo.  If you don't run it twice the PDF generated doesn't have a table of contents.
+
+
+
+
+
