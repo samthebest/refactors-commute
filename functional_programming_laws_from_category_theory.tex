@@ -98,7 +98,7 @@ A category $C$ consists of the following three mathematical entities
     \begin{enumerate}
         \item $\circ: hom(b, c) \times hom(a, b) \rightarrow hom(a, c)$
         \item \textbf{Associativity}: $h \circ (g \circ f) = (h \circ g) \circ f$
-        \item \textbf{Identity}: For every object $x \in ob(C)$ there exists $1_x: x \rightarrow x$ called the \textbf{identity morphism for $x$} where $f \circ 1_a = f = 1_b \circ f$
+        \item \textbf{Identity}: For every object $x \in ob(C)$ there exists $1_x: x \rightarrow x$ (sometimes written $Id_x$) called the \textbf{identity morphism for $x$} where $f \circ 1_a = f = 1_b \circ f$
     \end{enumerate}
     \item asdf
 \end{enumerate}
@@ -123,7 +123,7 @@ Let $S$ be the following
 
 \begin{enumerate}
     \item $ob(S)$ is the class of Scala types
-    \item $hom(S)$ is the class of Scala (1-param) functions (or methods)
+    \item $hom(S)$ is the class of Scala (1-param pure) functions (or methods)
     \item For any type \texttt{A} in $ob(S)$, this has a class of instances, which we will write $A$, and write \texttt{x:A} to mean $x \in A$ or ``x is of type \texttt{A}"
     \item We write $f: A \rightarrow B$ and \texttt{f:A => B} interchangeably without loss of generality
     \item $\circ$ will correspond to regular functional composition, i.e. $g \circ f$ is simply $\texttt{x => g(f(x))}
@@ -140,19 +140,79 @@ $S$ is a well defined Category.
 Given types \texttt{A, B, C, D} and functions \texttt{f:A => B}, \texttt{g:B => C}, \texttt{h:C => D}.\newline
 \\
 \noindent \textbf{Associativity:} we need to show $h \circ (g \circ f) = (h \circ g) \circ f$, which by definition of $=$ means showing:\newline
-\noindent For any \texttt{x:A}, \texttt{(x => h((x => f(g(x)))(x)))(x)} = \texttt{(x => (x => h(g(x)))(f(x)))(x)}\newline
+\noindent For any \texttt{x:A}, \newline
+\texttt{(x => h((x => f(g(x)))(x)))(x)} = \texttt{(x => (x => h(g(x)))(f(x)))(x)}\newline
 \\
 \noindent \texttt{(x => h((x => f(g(x)))(x)))(x)} = \texttt{(x => h((f(g(x)))))(x)} by inlining lambda function \texttt{x => f(g(x))}\newline
 = \texttt{(x => h(f(g(x))))(x)}  by removing redundant parens \newline
 = \texttt{(x => (x => h(g(x)))(f(x)))(x)} by extracting out the lambda function \texttt{(x => h(g(x)))}\newline
 \\
-\noindent \textbf{Identity:} For any given type \texttt{A}, \texttt{id:A => A = (x: A) => x} is clearly the identitiy morphism.
+\noindent \textbf{Identity:} For any given type \texttt{A}, \texttt{id:A => A = (x: A) => x} is clearly the identitiy morphism.  Henceforth we will call this \texttt{id[A]}. \newline
+\\
+\noindent As required \blacksquare
 
 % TODO Get above indentation to work properly
 
-\subsection{Definition - Functor}
+\subsection{Definition - Functor (Covariant)}
 
+Let $C$ and $D$ be categories. A \textbf{Functor} from $C$ to $D$ is a mapping that
 
+\begin{enumerate}
+    \item Associates each object $x \in ob(C)$ to an object $F(x) \in ob(D)$
+    \item Associates each morphism $f: x \rightarrow y$ in $hom(C)$ to a morphism $F(f): F(x) \rightarrow F(y)$ in $hom(D)$ such that
+    \begin{enumerate}
+        \item For every $x \in ob(C)$, $F(1_x) = 1_{F(x)}$
+        \item For any morphisms $f: x \rightarrow y$ and $g: y \rightarrow z$ in $hom(C)$, $F(g \circ f) = F(g) \circ F(f)$
+    \end{enumerate}
+\end{enumerate}
 
+I.e. Functors preserve identity and composition.
+
+\subsection{Definition - Functor (Contravariant)}
+
+TODO
+
+\subsection{Example - Scala Parametric Types with \texttt{map}}
+\label{Functor Example}
+
+Let \texttt{F} be a type in Scala with one type parameter, and a method \texttt{map}, then define a Functor $F$ as follows:
+
+\begin{enumerate}
+    \item Associates each type $A \in ob(S)$ to \texttt{F[A]}
+    \item Associates each function $f: A \rightarrow B$ in $hom(S)$ to a morphism $\texttt{map}_F(f): F[A] \rightarrow F[B]$ where for any \texttt{x:F[A]}, $\texttt{map}_F(f)(x) = \texttt{x.map(f)}$
+\end{enumerate}
+
+For most native types, like \texttt{List}, \texttt{Option}, etc the induced Functor is indeed a well defined Functor, i.e. satisfies identity and composition preservation.
+
+\subsection{Example - \texttt{List} induces a well defined Functor}
+
+Notation as before \newline
+\\
+\noindent \textbf{Identity Preservation:} For any \texttt{x:F[A]}, \newline
+$\texttt{map}_F(1_A)(x) = \texttt{map}_F(\texttt{id[A]})(x)$ by definition of $1$ \newline
+$= \texttt{x.map}(\texttt{id[A]})$ by \hyperref[Functor Example]{definition} \newline
+$= \texttt{x}$ an obvious property of lists \newline
+$= \texttt{id[F[A]]}(x)$ by definition of \texttt{id} \newline
+$= 1_{\texttt{F[A]}}$ by definition of $1$ \newline
+\\
+\noindent \textbf{Composition:} For any \texttt{x:F[A]}, \newline
+$\texttt{map}_F(g \circ f)(x) = \texttt{map}_F(\texttt{x => g(f(x))})(x)$ by definition of $\circ$ \newline
+$= \texttt{x.map(x => g(f(x)))}$ by \hyperref[Functor Example]{definition} \newline
+$= \texttt{x.map(f).map(g)}$ an obvious property of lists \newline
+$= \texttt{map}_F(g)(\texttt{x.map(f)})$ by \hyperref[Functor Example]{definition} \newline
+$= \texttt{map}_F(g)(\texttt{map}_F(f)(x))$ by \hyperref[Functor Example]{definition} \newline
+$= \texttt{map}_F(g) \circ \texttt{map}_F(f)(x)$ by definition of $\circ$ \newline
+Therefore $\texttt{map}_F(g \circ f) = \texttt{map}_F(g) \circ \texttt{map}_F(f)$ \newline
+\\
+\noindent As required \blacksquare
+
+\subsection{Definition - Functor Laws}
+
+We say a 1-parameterised type \texttt{F} satisfies the Functor Laws provided for any \texttt{x:F[A]}:
+\\
+\noindent \texttt{x.map(id[A])} \texttt{must\_===} \texttt{x} \newline
+\texttt{x.map(f).map(g)} \texttt{must\_===} \texttt{x.map(g compose f)} \newline
+
+\subsection{Example - \texttt{Encoder.contramap} induces a well defined Contravariant Functor}
 
 \end{document}
