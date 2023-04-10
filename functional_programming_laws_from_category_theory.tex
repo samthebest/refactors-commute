@@ -119,7 +119,7 @@ Let $I_1$ and $I_2$ satsify the definition of an identity morphism for $a$\newli
 
 \subsection{Example - Scala Category}
 
-Let $S$ be the following category
+Let $S$ be the following
 
 \begin{enumerate}
     \item $ob(S)$ is the class of Scala types
@@ -129,29 +129,30 @@ Let $S$ be the following category
     \item $\circ$ will correspond to regular functional composition, i.e. $g \circ f$ is simply $\texttt{x => g(f(x))}
 \end{enumerate}
 
-We define equality on Scala functions as follows: for any types \texttt{A} and \texttt{B} Scala functions \texttt{f:A => B} and \texttt{g:A => B} are equal if and only if for any instance \texttt{x:A}, \texttt{f(x) = g(x)}
+We define equality on Scala functions as follows: for any types \texttt{A} and \texttt{B} Scala functions \texttt{f:A => B} and \texttt{g:A => B} are equal if and only if for any instance \texttt{x:A}, \texttt{f(x) = g(x)}.  We will henceforth certain typical refactoring operations preserve equality, like inlining and extracting functions.
 
 \subsection{Theorem - The Scala Category is well defined}
 
+$S$ is a well defined Category.
+
+\subsubsection{Proof}
+
 Given types \texttt{A, B, C, D} and functions \texttt{f:A => B}, \texttt{g:B => C}, \texttt{h:C => D}.\newline
 \\
-\noindent \textbf{Associativity} we need to show $h \circ (g \circ f) = (h \circ g) \circ f$, which by definition of $=$ means showing:\newline
+\noindent \textbf{Associativity:} we need to show $h \circ (g \circ f) = (h \circ g) \circ f$, which by definition of $=$ means showing:\newline
 \noindent For any \texttt{x:A}, \texttt{(x => h((x => f(g(x)))(x)))(x)} = \texttt{(x => (x => h(g(x)))(f(x)))(x)}\newline
 \\
-\noindent \texttt{(x => h((x => f(g(x)))(x)))(x)} = \texttt{(x => h((f(g(x)))))(x)} \newline
-\hspace{4cm} = \texttt{(x => h(f(g(x))))(x)} \newline
-\hspace{4cm} = \texttt{h(f(g(x)))} \newline
+\noindent \texttt{(x => h((x => f(g(x)))(x)))(x)} = \texttt{(x => h((f(g(x)))))(x)} by inlining lambda function \texttt{x => f(g(x))}\newline
+= \texttt{(x => h(f(g(x))))(x)}  by removing redundant parens \newline
+= \texttt{(x => (x => h(g(x)))(f(x)))(x)} by extracting out the lambda function \texttt{(x => h(g(x)))}\newline
+\\
+\noindent \textbf{Identity:} For any given type \texttt{A}, \texttt{id:A => A = (x: A) => x} is clearly the identitiy morphism.
+
+% TODO Get above indentation to work properly
+
+\subsection{Definition - Functor}
 
 
-
-
-\subsubsection{Function Equality}
-
-asf
-
-
-
-asdf
 
 
 \end{document}
