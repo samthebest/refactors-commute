@@ -76,10 +76,76 @@ It's estimated that Alan Turing's creativity in mathematics and engineering, by 
 
 \section{Basic Definitions}
 
-\subsection{Category}
+\subsection{Notation - Set Theory and Class Theory}
+
+We will refer to \textbf{classes}, which can be thought of as like \textbf{sets} from Set Theory, except that classes may not necessary satisfy a classical axiomatization of Set Theory (e.g. Zermelo–Fraenkel Set Theory).  The reason for this is that a class may consist of, say ``all sets", or ``all sets that are not members of themselves", which are not valid sets according to ZFC.
+
+To keep notation straightforward we may still use Set Theoretic notation, for example $x \in S$, $A \subset B$ and write functions $f: A \rightarrow B$, but this should be read as $x$ is a member of the class $S$, etc.
+
+\subsection{Definition - Category}
 
 A category $C$ consists of the following three mathematical entities
 
+\begin{enumerate}
+    \item A class $ob(C)$, whose elements are called \textbf{objects}
+    \item A class $hom(C)$, whose elements are called \textbf{morphisms}, or \textbf{maps}, or \textbf{arrows}
+    \begin{enumerate}
+        \item Every $f \in hom(C)$ has two (not necessarily distinct) corresponding members of $ob(C)$ called the \textbf{source object} and \textbf{target object}
+        \item If $a, b \in ob(C)$ are the source and target objects respectively for some $f$, then we write $f: a \rightarrow b$, or say ``$f$ is a morphism from $a$ to $b$"
+        \item For any $a, b \in ob(C)$ we write $hom(a, b)$ to be the class (or \textbf{hom-class}) of all morphisms from $a$ to $b$
+    \end{enumerate}
+    \item A binary operation $\circ: hom(b, c) \times hom(a, b) \rightarrow hom(a, c)$, called \textbf{Composition of Morphisms}, such that, for any $a, b, c, d \in ob(C)$, $f: a \rightarrow b$, $g: b \rightarrow c$, $h: c \rightarrow d$
+    \begin{enumerate}
+        \item $\circ: hom(b, c) \times hom(a, b) \rightarrow hom(a, c)$
+        \item \textbf{Associativity}: $h \circ (g \circ f) = (h \circ g) \circ f$
+        \item \textbf{Identity}: For every object $x \in ob(C)$ there exists $1_x: x \rightarrow x$ called the \textbf{identity morphism for $x$} where $f \circ 1_a = f = 1_b \circ f$
+    \end{enumerate}
+    \item asdf
+\end{enumerate}
+
+When defining a Category it can often be important to explicitly define what is meant when morphisms are equal.
+
+\subsection{Theorem - Identity is Unique}
+
+For any category $C$ and any object $a \in ob(C)$, the identity morphism is unique
+
+\subsubsection{Proof}
+
+Let $I_1$ and $I_2$ satsify the definition of an identity morphism for $a$\newline
+\\
+\noindent $I_1 = I_2 \circ I_1 = I_1 \circ I_2 = I_2$ by definition
+\\
+\noindent Therefore $I_1 = I_2$ \blacksquare
+
+\subsection{Example - Scala Category}
+
+Let $S$ be the following category
+
+\begin{enumerate}
+    \item $ob(S)$ is the class of Scala types
+    \item $hom(S)$ is the class of Scala (1-param) functions (or methods)
+    \item For any type \texttt{A} in $ob(S)$, this has a class of instances, which we will write $A$, and write \texttt{x:A} to mean $x \in A$ or ``x is of type \texttt{A}"
+    \item We write $f: A \rightarrow B$ and \texttt{f:A => B} interchangeably without loss of generality
+    \item $\circ$ will correspond to regular functional composition, i.e. $g \circ f$ is simply $\texttt{x => g(f(x))}
+\end{enumerate}
+
+We define equality on Scala functions as follows: for any types \texttt{A} and \texttt{B} Scala functions \texttt{f:A => B} and \texttt{g:A => B} are equal if and only if for any instance \texttt{x:A}, \texttt{f(x) = g(x)}
+
+\subsection{Theorem - The Scala Category is well defined}
+
+Given types \texttt{A, B, C, D} and functions \texttt{f:A => B}, \texttt{g:B => C}, \texttt{h:C => D}.\newline
+\\
+\noindent \textbf{Associativity} we need to show $h \circ (g \circ f) = (h \circ g) \circ f$, which by definition of $=$ means showing:\newline
+\noindent For any \texttt{x:A}, \texttt{(x => h((x => f(g(x)))(x)))(x)} = \texttt{(x => (x => h(g(x)))(f(x)))(x)}\newline
+\\
+\noindent \texttt{(x => h((x => f(g(x)))(x)))(x)} = \texttt{(x => h((f(g(x)))))(x)} \newline
+\hspace{4cm} = \texttt{(x => h(f(g(x))))(x)} \newline
+\hspace{4cm} = \texttt{h(f(g(x)))} \newline
+
+
+
+
+\subsubsection{Function Equality}
 
 asf
 
