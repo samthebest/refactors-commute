@@ -72,7 +72,7 @@ We intend on building up the notion of a Commutative Diagram and show that many 
 
 \subsection{Dedication}
 
-It's estimated that Alan Turing's creativity in mathematics and engineering, by essentially inventing the computer, to assist in codebreaking in the second world war reduced the length of the war by 2 to 3 years saving 14 to 21 millions lives.  We dedicate this paper to his memory.
+TODO
 
 \section{Basic Definitions}
 
@@ -151,7 +151,32 @@ Given types \texttt{A, B, C, D} and functions \texttt{f:A => B}, \texttt{g:B => 
 \\
 \noindent As required \blacksquare
 
-% TODO Get above indentation to work properly
+
+
+
+
+\subsection{Definition - Isomorphisms (of morphisms)}
+
+Let $C$ be a category, let $A, B \in ob(C)$, a morphism $f: A \rightarrow B$ is an isomorphism if and only if there exists $g: B \rightarrow A$ such that $g \circ f = 1_A$ and $f \circ g = 1_B$. When there exists an isomorphism $f: A \rightarrow B$ then we say $A$ and $B$ are isomorphic.
+
+NOTE: There is also a definition of Ismorphism on Categories
+
+\subsection{Example - Set Category}
+
+Let $Set$ be the category where $ob(Set)$ is the class of sets and $hom(Set)$ is the class of functions on sets, then any bijection is an isomorphism.
+
+\subsection{Definition - Universal Property}
+
+Given some property of objects $\phi$ with one free variable, we say an object $A$ is \textbf{the unique object up to ismorphism satisfying $\phi(A)$} to mean that for any other $B$ such that $\phi(B)$, then there exists an isomorphism $f: A \rightarrow B$.
+
+\subsection{Example - Equinumerosity}
+
+The set $\{ 0, 1, 2, ..., n \}$ is the unique set up to ismorphism such that $|\{ 0, 1, 2, ..., n \}| = n$. This is interesting because it means we can define the number $n$ \textit{as the set} $\{ 0, 1, 2, ..., n \}$ if we let $=$ mean equality up to ismorphism.  There is a similar mechanism to produce infinite numbers also (called ordinal numbers).
+
+\subsection{Definition - Endomorphism}
+
+TODO
+
 
 \subsection{Definition - Functor (Covariant)}
 
@@ -213,6 +238,73 @@ We say a 1-parameterised type \texttt{F} satisfies the Functor Laws provided for
 \noindent \texttt{x.map(id[A])} \texttt{must\_===} \texttt{x} \newline
 \texttt{x.map(f).map(g)} \texttt{must\_===} \texttt{x.map(g compose f)} \newline
 
+\subsection{Remark - Practical Application}
+
+\textbf{Optimisations:} Lazily evaluated types, like \texttt{Iterators}, Streams, RDDs, Scalding datasets, etc can avoid multiple traversals of underlying data (which may well require reads from network or disk) when multiple \texttt{map} calls are chained together (in not necessarily clear ways due to function boundaries).
+
+\textbf{Refactors:} Sometimes \texttt{x.map(f).map(g)} is easier to read sometimes \texttt{x.map(g compose f)} may be easier to read depending on the context.
+
 \subsection{Example - \texttt{Encoder.contramap} induces a well defined Contravariant Functor}
+
+TODO
+
+\subsection{Definition - Product}
+
+TODO
+
+\subsection{Example - Tuples in Scala}
+
+Given two types \texttt{A} and \texttt{B}, we can consider the Tuple type \texttt{(A, B)} with functions \texttt{\_.\_1} and \texttt{\_.\_2}.
+
+\subsection{Proof - Tuples are Products}
+
+Given some type \texttt{V} with $q_1: V \rightarrow A$ and $q_2: V \rightarrow B$, then if we let $q(v) := (q_1(v), q_2(v))$ then the proof follows easily using the definitions.
+
+\subsection{Definition - Product Laws}
+
+TODO
+
+\subsection{Definition - Coproduct}
+
+Let $C$ be a category, let $x_1, x_2 \in ob(C)$, the \textbf{coproduct} of $x_1$ and $x_2$, written $x_1 \oplus x_2$ or $x_1 \sqcup x_2$ (or even sometimes $x_1 + x_2$), is the unique object (up to isomorphism) such that there exists morphisms $i_1: x_1 \rightarrow x_1 \sqcup x_2$ and $i_2: x_2 \rightarrow x_1 \sqcup x_2$ such that for any object $y$ and morphisms $f_1: x_1 \rightarrow y$, $f_2: x_2 \rightarrow y$, there exists a unique morphism $f: x_1 \sqcup x_2 \rightarrow y$ such that $f_1 = f \circ i_1$ and $f_2 = f \circ i_2$.
+
+\subsection{Example - Disjoint Union}
+
+(In the $Set$ category) let's define $\oplus$ to be disjoint union for sets, i.e. given sets $X_1$ and $X_2$, then 
+
+$$X_1 \oplus X_2 := \{ (x, 1) | x \in X_1 \} \cup \{ (x, 2) | x \in X_2 \} $$
+
+\noindent Then let $i_1: x \mapsto (x, 1)$ and $i_2: x \mapsto (x, 2)$. 
+Now given any set $Y$ and morphisms $f_1: X_1 \rightarrow y$, $f_2: X_2 \rightarrow Y$, then define $f$ such that $f: (x, 1) \mapsto f_1(x)$ and $f: (x, 2) \mapsto f_2(x)$, note that the crux of this proof is the observation that $f$ is well defined; i.e. given a member of $X_1 \oplus X_2$ it's easy to construct a function that tells us if the member was formed from $i_1$ or $i_2$ by looking at the second element (the index) of the tuple.\newline
+\\
+\noindent So $f(i_1(x)) = f((x, 1)) = f_1(x)$ and $f(i_2(x)) = f((x, 2)) = f_2(x)$ \blacksquare
+
+\subsection{Example - Either}
+
+$i_1$ and $i_2$ are \texttt{Left(\_)} and \texttt{Right(\_)} resp.  Define $f$ such that $f: \texttt{Left(x)} \mapsto f_1(x)$ and $f: \texttt{Right(x)} \mapsto f_2(x)$.  Again the crux of this proof is that $f$ is well defined, here we know that we can pattern match on Eithers to determine if they are Lefts or Rights, and we know we can get out of them what we put into them bijectively. \newline
+\\
+\noindent Suppose \texttt{Left(x)} was not well behaved, say \texttt{Left(x).get} returned some \texttt{y!=x}, then $f(i_1(x)) = f_1(y)$ and $f_1(y)$ may not be equal to $f_1(x)$.
+
+\subsection{Remark - Deriving Useful Coproduct Laws}
+
+In the above we observe the importance of having a well defined way to detecting which of $i_1$ or $i_2$ was used to construct the coproduct element. Furthermore this is more practically instructive than the full definition, which is somewhat too abstract to really use in day to day programming.  Therefore the below laws give us a less abstract but more intuitive laws.  When these laws hold, then we can construct the required $f$ to prove that the type is a Coproduct.\newline
+\\
+Note that these laws may be \textit{stronger} than necessary, i.e. there may exist a type which is technically a coproduct but doesn't satisfy the below laws (\textbf{Exercise:} prove either way).
+
+\subsection{Definition - Coproduct Laws}
+
+A (2-parameter) type \texttt{CP[A,B]} is a coproduct provided it has constructors \texttt{left(a:A):CP[A,B]} and \texttt{right(a:A):CP[A,B]}, and extractors \texttt{getLeft:Option[A]} and \texttt{getRight:Option[B]}, such that given \texttt{x:CP[A,B]}, \texttt{a:A}, \texttt{b:B}
+
+\begin{enumerate}
+    \item \texttt{x.getLeft.isDefined} ex-or \texttt{x.getRight.isDefined}
+    \item \texttt{left(a).getLeft.isDefined} and \texttt{right(b).getRight.isDefined}
+    \item \texttt{left(a).getLeft.get} \texttt{must\_=== a}  and \texttt{right(b).getRight.get} \texttt{must\_=== b}
+\end{enumerate}
+
+\subsection{Remark - N-ary Products and Coproducts}
+
+It should be fairly implicit how to extend the definitions to $n$ objects rather than just $2$ using an index set $\{1, 2, ..., n\}$
+
+\section{Pure, Extract, Natural Tranformations and Adjunctions}
 
 \end{document}
